@@ -1,5 +1,12 @@
 import {expect, test} from "@playwright/test";
-import {deletePlayer, generatePassword, loginPlayer, registerNewPlayer} from "../helpers/player.js";
+import {
+    deletePlayer,
+    generateEmail,
+    generatePassword,
+    generateUsername,
+    loginPlayer,
+    registerNewPlayer
+} from "../helpers/player.js";
 
 
 test("has components", async ({ page }) => {
@@ -57,6 +64,96 @@ test("cannot update player info if the passwords do not match", async ({ page })
 
     const login = await loginPlayer(player.username, player.password);
     expect(login.status()).toBe(200);
+
+    await deletePlayer({ usernameOrEmail: player.username, password: player.password });
+})
+
+test("can login with new password", async ({ page }) => {
+    const registration = await registerNewPlayer();
+    const player = await registration.input;
+    await page.goto("http://localhost:5173/login")
+    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
+    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
+    await page.getByRole("button", { name: /^Login$/ }).click();
+    await page.getByRole("button", { name: player.username }).click();
+    await page.getByRole("menuitem", { name: "Settings" }).click();
+
+    const newPassword = generatePassword();
+    await page.getByRole("textbox", { name: "Enter the new password" }).fill(newPassword);
+    await page.getByRole("textbox", { name: "(again)" }).fill(newPassword);
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    const login = await loginPlayer(player.username, newPassword);
+    expect(login.status()).toBe(200);
+
+    await deletePlayer({ usernameOrEmail: player.username, password: newPassword });
+})
+
+test("can login with new username", async ({ page }) => {
+    const registration = await registerNewPlayer();
+    const player = await registration.input;
+    await page.goto("http://localhost:5173/login")
+    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
+    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
+    await page.getByRole("button", { name: /^Login$/ }).click();
+    await page.getByRole("button", { name: player.username }).click();
+    await page.getByRole("menuitem", { name: "Settings" }).click();
+
+    await expect(page).toHaveURL("http://localhost:5173/settings");
+
+    const newUsername = generateUsername();
+    await page.locator("#username").fill(newUsername);
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    const login = await loginPlayer(newUsername, player.password);
+    expect(login.status()).toBe(200);
+
+    await deletePlayer({ usernameOrEmail: newUsername, password: player.password });
+})
+
+test("can login with new email", async ({ page }) => {
+    const registration = await registerNewPlayer();
+    const player = await registration.input;
+    await page.goto("http://localhost:5173/login")
+    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
+    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
+    await page.getByRole("button", { name: /^Login$/ }).click();
+    await page.getByRole("button", { name: player.username }).click();
+    await page.getByRole("menuitem", { name: "Settings" }).click();
+
+    await expect(page).toHaveURL("http://localhost:5173/settings");
+
+    const newEmail = generateEmail();
+    await page.locator("#email").fill(newEmail);
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    const login = await loginPlayer(newEmail, player.password);
+    expect(login.status()).toBe(200);
+
+    await deletePlayer({ usernameOrEmail: player.username, password: player.password });
+})
+
+test("update full name", async ({ page }) => {
+    const registration = await registerNewPlayer();
+    const player = await registration.input;
+    await page.goto("http://localhost:5173/login")
+    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
+    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
+    await page.getByRole("button", { name: /^Login$/ }).click();
+    await page.getByRole("button", { name: player.username }).click();
+    await page.getByRole("menuitem", { name: "Settings" }).click();
+
+    await expect(page).toHaveURL("http://localhost:5173/settings");
+
+    const newFullName = "John Doe";
+    await page.locator("#full_name").fill(newFullName);
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    let login = await loginPlayer(player.username, player.password);
+    expect(login.status()).toBe(200);
+
+    login = await login.json();
+    expect(login.fullName).toBe(newFullName);
 
     await deletePlayer({ usernameOrEmail: player.username, password: player.password });
 })
