@@ -133,6 +133,49 @@ test("can login with new email", async ({ page }) => {
     await deletePlayer({ usernameOrEmail: player.username, password: player.password });
 })
 
+test("cannot update with invalid data", async ({ page }) => {
+    const registration = await registerNewPlayer();
+    const player = await registration.input;
+    await page.goto("http://localhost:5173/login")
+    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
+    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
+    await page.getByRole("button", { name: /^Login$/ }).click();
+    await page.getByRole("button", { name: player.username }).click();
+    await page.getByRole("menuitem", { name: "Settings" }).click();
+
+    await expect(page).toHaveURL("http://localhost:5173/settings");
+
+    const invalidUsername = "a";
+    const invalidPassword = "invalid password";
+    const invalidEmail = "not a valid email";
+    await page.locator("#username").fill(invalidUsername);
+    await page.getByRole("textbox", { name: "Enter the new password" }).fill(invalidPassword);
+    await page.getByRole("textbox", { name: "(again)" }).fill(invalidPassword);
+    await page.locator("#email").fill(invalidEmail);
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    await expect(page).toHaveURL("http://localhost:5173/settings");
+
+    await expect(page.getByText("Username must have 4-24 characters and include only letters and digits.")).toBeVisible()
+    await expect(page.getByText("Password must have 8-24 characters and include at least a digit, a lowercase, an uppercase and a symbol")).toBeVisible();
+    await expect(page.getByText("Must be a valid email address")).toBeVisible();
+
+    const validUsername = generateUsername();
+    const validPassword = generatePassword();
+    const validEmail = generateEmail(validUsername);
+    await page.locator("#username").fill(validUsername);
+    await page.getByRole("textbox", { name: "Enter the new password" }).fill(validPassword);
+    await page.getByRole("textbox", { name: "(again)" }).fill(validPassword);
+    await page.locator("#email").fill(validEmail);
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    await expect(page.getByText("Username must have 4-24 characters and include only letters and digits.")).not.toBeVisible()
+    await expect(page.getByText("Password must have 8-24 characters and include at least a digit, a lowercase, an uppercase and a symbol")).not.toBeVisible();
+    await expect(page.getByText("Must be a valid email address")).not.toBeVisible();
+
+    await deletePlayer({ usernameOrEmail: validUsername, password: validPassword });
+})
+
 test("update full name", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;

@@ -16,17 +16,27 @@ export default function Settings() {
     const navigate = useNavigate();
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [username, setUsername] = useState(player.username);
+    const [usernameError, setUsernameError] = useState(false);
+    const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
     const [password, setPassword] = useState("");
+    const [passwordError, setPasswordError] = useState(false);
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
     const [retypedPassword, setRetypedPassword] = useState("");
     const [matches, setMatches] = useState(true);
     const [fullName, setFullName] = useState(player.fullName);
     const [email, setEmail] = useState(player.email);
+    const [emailError, setEmailError] = useState(false);
+    const [emailErrorMessage, setEmailErrorMessage] = useState("");
 
     async function saveChanges() {
         console.log(`Username: ${username}`);
         console.log(`Password: ${password}`);
         console.log(`Full Name: ${fullName}`);
         console.log(`Email: ${email}`);
+
+        setUsernameError(false);
+        setPasswordError(false);
+        setEmailError(false);
 
         if (password !== retypedPassword) {
             setMatches(false);
@@ -60,7 +70,22 @@ export default function Settings() {
                 body: updateInfo
             });
             const json = await response.json();
-            dispatch(update(json));
+            if (response.ok)
+                dispatch(update(json));
+            else {
+                if (json.username) {
+                    setUsernameError(true);
+                    setUsernameErrorMessage(json.username);
+                }
+                if (json.password) {
+                    setPasswordError(true);
+                    setPasswordErrorMessage(json.password);
+                }
+                if (json.email) {
+                    setEmailError(true);
+                    setEmailErrorMessage(json.email);
+                }
+            }
         } catch(error) {
             console.error(error.message);
         }
@@ -92,6 +117,8 @@ export default function Settings() {
             <TextField
                 id="username"
                 value={username}
+                error={usernameError}
+                helperText={usernameError ? usernameErrorMessage : ""}
                 onChange={(e) => setUsername(e.target.value) }
                 fullWidth
                 color="white"
@@ -113,6 +140,8 @@ export default function Settings() {
                 type="password"
                 placeholder="Enter the new password"
                 value={password}
+                error={passwordError}
+                helperText={passwordError ? passwordErrorMessage : ""}
                 onChange={(e) => setPassword(e.target.value) }
                 fullWidth
                 color="white"
@@ -173,6 +202,8 @@ export default function Settings() {
             <TextField
                 id="email"
                 value={email}
+                error={emailError}
+                helperText={emailError ? emailErrorMessage : ""}
                 onChange={(e) => setEmail(e.target.value) }
                 fullWidth
                 color="white"
