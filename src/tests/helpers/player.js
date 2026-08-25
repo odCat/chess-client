@@ -63,6 +63,8 @@ export async function deletePlayer({ usernameOrEmail, password, id, token }) {
 }
 
 export function generateEmail(username) {
+    if (username == null)
+        username = generateUsername();
     return username.concat("@test.com");
 }
 
