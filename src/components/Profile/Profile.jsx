@@ -61,7 +61,7 @@ export default function Profile() {
                         borderRadius: 0
                     }}
                 >
-                    <Table sx={{
+                    <Table id="game_history" sx={{
                     }}>
                         <TableHead>
                             <TableRow>
