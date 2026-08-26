@@ -4,7 +4,6 @@ import {
     generateEmail,
     generatePassword,
     generateUsername,
-    loginPlayer,
     registerNewPlayer
 } from "../helpers/player.js";
 
