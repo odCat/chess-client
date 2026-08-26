@@ -1,4 +1,4 @@
-import {expect, test} from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
     deletePlayer,
     generateEmail,
@@ -9,15 +9,19 @@ import {
 } from "../helpers/player.js";
 
 
-test("has components", async ({ page }) => {
-    const registration = await registerNewPlayer();
-    const player = await registration.input;
+async function loginAndGoToSettings(page, player) {
     await page.goto("http://localhost:5173/login")
     await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
     await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
     await page.getByRole("button", { name: /^Login$/ }).click();
     await page.getByRole("button", { name: player.username }).click();
     await page.getByRole("menuitem", { name: "Settings" }).click();
+}
+
+test("has components", async ({ page }) => {
+    const registration = await registerNewPlayer();
+    const player = await registration.input;
+    await loginAndGoToSettings(page, player);
 
     await expect(page).toHaveTitle("chess-client");
 
@@ -49,12 +53,7 @@ test("has components", async ({ page }) => {
 test("cannot update player info if the passwords do not match", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;
-    await page.goto("http://localhost:5173/login")
-    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
-    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
-    await page.getByRole("button", { name: /^Login$/ }).click();
-    await page.getByRole("button", { name: player.username }).click();
-    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await loginAndGoToSettings(page, player);
 
     await page.getByRole("textbox", { name: "Enter the new password" }).fill(generatePassword());
     await page.getByRole("textbox", { name: "(again)" }).fill(generatePassword());
@@ -71,12 +70,7 @@ test("cannot update player info if the passwords do not match", async ({ page })
 test("can login with new password", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;
-    await page.goto("http://localhost:5173/login")
-    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
-    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
-    await page.getByRole("button", { name: /^Login$/ }).click();
-    await page.getByRole("button", { name: player.username }).click();
-    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await loginAndGoToSettings(page, player);
 
     const newPassword = generatePassword();
     await page.getByRole("textbox", { name: "Enter the new password" }).fill(newPassword);
@@ -92,12 +86,7 @@ test("can login with new password", async ({ page }) => {
 test("can login with new username", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;
-    await page.goto("http://localhost:5173/login")
-    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
-    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
-    await page.getByRole("button", { name: /^Login$/ }).click();
-    await page.getByRole("button", { name: player.username }).click();
-    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await loginAndGoToSettings(page, player);
 
     await expect(page).toHaveURL("http://localhost:5173/settings");
 
@@ -114,12 +103,7 @@ test("can login with new username", async ({ page }) => {
 test("can login with new email", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;
-    await page.goto("http://localhost:5173/login")
-    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
-    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
-    await page.getByRole("button", { name: /^Login$/ }).click();
-    await page.getByRole("button", { name: player.username }).click();
-    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await loginAndGoToSettings(page, player);
 
     await expect(page).toHaveURL("http://localhost:5173/settings");
 
@@ -136,12 +120,7 @@ test("can login with new email", async ({ page }) => {
 test("cannot update with invalid data", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;
-    await page.goto("http://localhost:5173/login")
-    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
-    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
-    await page.getByRole("button", { name: /^Login$/ }).click();
-    await page.getByRole("button", { name: player.username }).click();
-    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await loginAndGoToSettings(page, player);
 
     await expect(page).toHaveURL("http://localhost:5173/settings");
 
@@ -179,12 +158,7 @@ test("cannot update with invalid data", async ({ page }) => {
 test("update full name", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;
-    await page.goto("http://localhost:5173/login")
-    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
-    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
-    await page.getByRole("button", { name: /^Login$/ }).click();
-    await page.getByRole("button", { name: player.username }).click();
-    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await loginAndGoToSettings(page, player);
 
     await expect(page).toHaveURL("http://localhost:5173/settings");
 
@@ -204,12 +178,7 @@ test("update full name", async ({ page }) => {
 test("can delete account", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;
-    await page.goto("http://localhost:5173/login")
-    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
-    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
-    await page.getByRole("button", { name: /^Login$/ }).click();
-    await page.getByRole("button", { name: player.username }).click();
-    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await loginAndGoToSettings(page, player);
 
     await page.getByRole("button", { name: "Delete your account" }).click();
 
@@ -230,12 +199,7 @@ test("can delete account", async ({ page }) => {
 test("can cancel account deletion", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;
-    await page.goto("http://localhost:5173/login")
-    await page.getByRole('textbox', { name: /^Email\/Username$/ }).fill(player.username);
-    await page.getByRole('textbox', { name: /^Password$/ }).fill(player.password);
-    await page.getByRole("button", { name: /^Login$/ }).click();
-    await page.getByRole("button", { name: player.username }).click();
-    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await loginAndGoToSettings(page, player);
 
     await page.getByRole("button", { name: "Delete your account" }).click();
 
