@@ -53,6 +53,10 @@ export default function Settings() {
             updateInfo.fullName = fullName;
         if (email != null && email !== player.email)
             updateInfo.email = email;
+
+        if (Object.keys(updateInfo).length === 0)
+            return ;
+
         updateInfo = JSON.stringify(updateInfo);
 
         try {
