@@ -94,15 +94,18 @@ export default function Settings() {
 
     async function deleteAccount() {
 
-        await fetch("http://localhost:8080/players?id=" + player.id, {
+        const response = await fetch("http://localhost:8080/players?id=" + player.id, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + player.password
             }
         })
-        dispatch(logout());
-        navigate("/login");
+
+        if (response.ok) {
+            dispatch(logout());
+            navigate("/login");
+        }
     }
 
     function handleClose() {
