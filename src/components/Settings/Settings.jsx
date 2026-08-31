@@ -9,6 +9,10 @@ import {useState} from "react";
 import TextField from "@mui/material/TextField";
 
 
+const SectionTitle = ({ children, ...props }) => (
+    <Typography variant="h5" sx={{ mt: 5 }} {...props}>{children}</Typography>
+);
+
 export default function Settings() {
 
     const player = useSelector(store => store.player);
@@ -112,7 +116,7 @@ export default function Settings() {
         <Box sx={{ mb: 20 }}>
             <Typography variant="h4" sx={{ my: 10 }}>Settings</Typography>
 
-            <Typography variant="h5">Username</Typography>
+            <SectionTitle sx={{ mt: 0 }}>Username</SectionTitle>
             <Divider sx={{width: "100%", mt: 1, mb: 2, borderColor: "#424548"}}/>
             <TextField
                 id="username"
@@ -134,7 +138,7 @@ export default function Settings() {
                 }}
             />
 
-            <Typography variant="h5" sx={{ mt: 5 }}>Password</Typography>
+            <SectionTitle>Password</SectionTitle>
             <Divider sx={{width: "100%", mt: 1, mb: 2, borderColor: "#424548"}}/>
             <TextField
                 type="password"
@@ -177,7 +181,7 @@ export default function Settings() {
                 }}
             />
 
-            <Typography variant="h5" sx={{ mt: 5 }}>Full name</Typography>
+            <SectionTitle>Full name</SectionTitle>
             <Divider sx={{width: "100%", mt: 1, mb: 2, borderColor: "#424548"}}/>
             <TextField
                 id="full_name"
@@ -197,7 +201,7 @@ export default function Settings() {
                 }}
             />
 
-            <Typography variant="h5" sx={{ mt : 5 }}>Email</Typography>
+            <SectionTitle>Email</SectionTitle>
             <Divider sx={{width: "100%", mt:1, mb: 2, borderColor: "#424548"}}/>
             <TextField
                 id="email"
@@ -223,7 +227,7 @@ export default function Settings() {
                 Save changes
             </Button>
 
-            <Typography variant="h5" sx={{ color: "#d73b3e", mt: 10 }}>Delete account</Typography>
+            <SectionTitle sx={{ color: "#d73b3e", mt: 10 }}>Delete account</SectionTitle>
             <Divider sx={{width: "100%", my: 2, borderColor: "#424548"}}/>
             <Button variant="contained" color="error" onClick={ () => setOpenDeleteDialog(true) }>
                 Delete your account
