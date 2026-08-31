@@ -32,12 +32,8 @@ export default function Settings() {
     const [emailError, setEmailError] = useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = useState("");
 
-    async function saveChanges() {
-        console.log(`Username: ${username}`);
-        console.log(`Password: ${password}`);
-        console.log(`Full Name: ${fullName}`);
-        console.log(`Email: ${email}`);
-
+    async function saveChanges()
+    {
         setUsernameError(false);
         setPasswordError(false);
         setEmailError(false);
@@ -48,17 +44,12 @@ export default function Settings() {
         } else
             setMatches(true);
 
-        if (matches)
-            console.log(`Passwords matches`);
-        else
-            console.log(`Passwords do not match`);
-
         let updateInfo = {};
         if (username != null && username !== player.username)
             updateInfo.username = username;
         if (password !== "" && matches)
             updateInfo.password = password;
-        if (fullName != null)
+        if (fullName != null && fullName !== player.fullName)
             updateInfo.fullName = fullName;
         if (email != null && email !== player.email)
             updateInfo.email = email;
