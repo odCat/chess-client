@@ -65,9 +65,11 @@ export default function Settings() {
                 body: updateInfo
             });
             const json = await response.json();
-            if (response.ok)
+            if (response.ok) {
                 dispatch(update(json));
-            else {
+                setPassword("");
+                setRetypedPassword("");
+            } else {
                 if (json.username) {
                     setUsernameError(true);
                     setUsernameErrorMessage(json.username);
@@ -155,6 +157,7 @@ export default function Settings() {
             <TextField
                 type="password"
                 placeholder="(again)"
+                value={retypedPassword}
                 error={!matches}
                 helperText={!matches ? "Passwords do not match" : ""}
                 onChange={(e) => setRetypedPassword(e.target.value) }
