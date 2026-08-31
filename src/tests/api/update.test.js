@@ -24,6 +24,8 @@ test("update all player information", async () => {
     const newFullName = "John Doe";
     const newEmail = generateEmail(newUsername);
     const newPassword = generatePassword();
+    const today = new Date().toISOString().split('T')[0];
+
     let updated = await api.patch(`/players?id=${login.id}`, {
         headers: {
             Authorization: `Bearer ${login.password}`
@@ -39,10 +41,12 @@ test("update all player information", async () => {
     expect(updated.ok()).toBeTruthy();
 
     updated = await updated.json();
+
     expect(updated.id).toEqual(id);
     expect(updated.username).toEqual(newUsername);
     expect(updated.email).toEqual(newEmail);
     expect(updated.fullName).toEqual(newFullName);
+    expect(updated.created).toEqual(today);
 
     await deletePlayer({
         id: id,
