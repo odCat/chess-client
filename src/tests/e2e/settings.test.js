@@ -182,10 +182,10 @@ test("can delete account", async ({ page }) => {
 
     await page.getByRole("button", { name: "Delete your account" }).click();
 
-    expect(page.getByRole("heading", { name: "Are you sure you want to delete your account?"}));
-    expect(page.getByText("This action cannot be undone."));
-    expect(page.getByRole("button", { name: "Delete"}));
-    expect(page.getByRole("button", { name: "Cancel"}));
+    await expect(page.getByRole("heading", { name: "Are you sure you want to delete your account?"}));
+    await expect(page.getByText("This action cannot be undone."));
+    await expect(page.getByRole("button", { name: "Delete"}));
+    await expect(page.getByRole("button", { name: "Cancel"}));
     await page.getByRole("button", { name: "Delete" }).click();
 
     await expect(page).toHaveURL("http://localhost:5173/login");
@@ -203,10 +203,10 @@ test("can cancel account deletion", async ({ page }) => {
 
     await page.getByRole("button", { name: "Delete your account" }).click();
 
-    expect(page.getByRole("heading", { name: "Are you sure you want to delete your account?"}));
-    expect(page.getByText("This action cannot be undone."));
-    expect(page.getByRole("button", { name: "Delete"}));
-    expect(page.getByRole("button", { name: "Cancel"}));
+    await expect(page.getByRole("heading", { name: "Are you sure you want to delete your account?"}));
+    await expect(page.getByText("This action cannot be undone."));
+    await expect(page.getByRole("button", { name: "Delete"}));
+    await expect(page.getByRole("button", { name: "Cancel"}));
     await page.getByRole("button", { name: "Cancel" }).click();
 
     await expect(page).toHaveURL("http://localhost:5173/settings");
