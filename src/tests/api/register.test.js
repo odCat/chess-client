@@ -14,11 +14,13 @@ test("can register a new player", async () => {
     expect(registration.response.ok()).toBeTruthy();
 
     const player = await registration.response.json();
+    const today = new Date().toISOString().split('T')[0];
     expect(player).toEqual({
         username: registration.input.username,
         email: registration.input.email,
         fullName: null,
-        password:registration.input.password
+        password: registration.input.password,
+        created: today
     });
 
     await deletePlayer({
