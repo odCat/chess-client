@@ -83,6 +83,11 @@ test("can login with new password", async ({ page }) => {
     await page.getByRole("textbox", { name: "(again)" }).fill(newPassword);
     await page.getByRole("button", { name: "Save changes" }).click();
 
+    await expect(page.locator("#username")).toHaveValue(player.username);
+    await expect(page.getByRole("textbox", { name: "Enter the new password" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "(again)" })).toBeVisible();
+    await expect(page.locator("#email")).toHaveValue(player.email);
+
     const login = await loginPlayer(player.username, newPassword);
     expect(login.status()).toBe(200);
 
@@ -100,6 +105,10 @@ test("can login with new username", async ({ page }) => {
     await page.locator("#username").fill(newUsername);
     await page.getByRole("button", { name: "Save changes" }).click();
 
+    await expect(page.getByRole("textbox", { name: "Enter the new password" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "(again)" })).toBeVisible();
+    await expect(page.locator("#email")).toHaveValue(player.email);
+
     const login = await loginPlayer(newUsername, player.password);
     expect(login.status()).toBe(200);
 
@@ -116,6 +125,10 @@ test("can login with new email", async ({ page }) => {
     const newEmail = generateEmail();
     await page.locator("#email").fill(newEmail);
     await page.getByRole("button", { name: "Save changes" }).click();
+
+    await expect(page.locator("#username")).toHaveValue(player.username);
+    await expect(page.getByRole("textbox", { name: "Enter the new password" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "(again)" })).toBeVisible();
 
     const login = await loginPlayer(newEmail, player.password);
     expect(login.status()).toBe(200);
@@ -174,6 +187,11 @@ test("update full name", async ({ page }) => {
 
     let login = await loginPlayer(player.username, player.password);
     expect(login.status()).toBe(200);
+
+    await expect(page.locator("#username")).toHaveValue(player.username);
+    await expect(page.getByRole("textbox", { name: "Enter the new password" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "(again)" })).toBeVisible();
+    await expect(page.locator("#email")).toHaveValue(player.email);
 
     login = await login.json();
     expect(login.fullName).toBe(newFullName);
