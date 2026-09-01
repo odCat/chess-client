@@ -31,6 +31,9 @@ export default function Settings() {
     const [email, setEmail] = useState(player.email);
     const [emailError, setEmailError] = useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = useState("");
+    const [saving, setSaving] = useState(false);
+
+    const MIN_SAVE_BUTTON_DELAY = 350;
 
     async function saveChanges()
     {
@@ -59,6 +62,8 @@ export default function Settings() {
 
         updateInfo = JSON.stringify(updateInfo);
 
+        setSaving(true);
+        const start = Date.now();
         try {
             const response = await fetch("http://localhost:8080/players?id=" + player.id, {
                 method: "PATCH",
@@ -89,6 +94,10 @@ export default function Settings() {
             }
         } catch(error) {
             console.error(error.message);
+        } finally {
+            const elapsed = Date.now() - start;
+            const remaining = Math.max(0, MIN_SAVE_BUTTON_DELAY - elapsed);
+            setTimeout(() => setSaving(false), remaining);
         }
     }
 
@@ -224,7 +233,12 @@ export default function Settings() {
                 }}
             />
 
-            <Button variant="contained" sx={{ mt: 5 }} onClick={ () => saveChanges() }>
+            <Button
+                variant="contained"
+                disabled={saving}
+                sx={{ mt: 5 }}
+                onClick={ () => saveChanges() }
+            >
                 Save changes
             </Button>
 

@@ -199,6 +199,23 @@ test("update full name", async ({ page }) => {
     await deletePlayer({ usernameOrEmail: player.username, password: player.password });
 })
 
+test("save button has delay", async ({ page }) => {
+    const registration = await registerNewPlayer();
+    const player = await registration.input;
+    await loginAndGoToSettings(page, player);
+
+    await expect(page).toHaveURL("http://localhost:5173/settings");
+
+    const newFullName = "John Doe";
+    await page.locator("#full_name").fill(newFullName);
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    await expect(page.getByRole("button", { name: "Save changes" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Save changes" })).toBeEnabled();
+
+    await deletePlayer({ usernameOrEmail: player.username, password: player.password });
+})
+
 test("can delete account", async ({ page }) => {
     const registration = await registerNewPlayer();
     const player = await registration.input;
