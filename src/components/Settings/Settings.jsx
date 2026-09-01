@@ -27,7 +27,7 @@ export default function Settings() {
     const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
     const [retypedPassword, setRetypedPassword] = useState("");
     const [matches, setMatches] = useState(true);
-    const [fullName, setFullName] = useState(player.fullName);
+    const [fullName, setFullName] = useState(player.fullName || "");
     const [email, setEmail] = useState(player.email);
     const [emailError, setEmailError] = useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = useState("");

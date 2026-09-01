@@ -29,6 +29,7 @@ test("has components", async ({ page }) => {
 
     await expect(page.getByRole("heading", { name: "Username" })).toBeVisible();
     await expect(page.locator("#username")).toBeVisible();
+    await expect(page.locator("#username")).toHaveValue(player.username);
 
     await expect(page.getByRole("heading", { name: "Password" })).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Enter the new password" })).toBeVisible();
@@ -36,9 +37,14 @@ test("has components", async ({ page }) => {
 
     await expect(page.getByRole("heading", { name: "Full name" })).toBeVisible();
     await expect(page.locator("#full_name")).toBeVisible();
+    if (player.fullName)
+        await expect(page.locator("#full_name")).toHaveValue(player.fullName);
+    else
+        await expect(page.locator("#full_name")).toHaveValue("");
 
     await expect(page.getByRole("heading", { name: "Email" })).toBeVisible();
     await expect(page.locator("#email")).toBeVisible();
+    await expect(page.locator("#email")).toHaveValue(player.email);
 
     await expect(page.getByRole("button", { name: /^Save changes$/ })).toBeVisible();
 
